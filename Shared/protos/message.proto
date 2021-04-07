@@ -1,0 +1,8 @@
+﻿syntax = "proto3";
+
+package Shared.Message;
+
+message Message {
+	int32 id = 1;
+	string data = 2;
+}
