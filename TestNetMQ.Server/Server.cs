@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf;
 using NetMQ;
 using NetMQ.Sockets;
+using Shared;
 using Shared.Message;
 
 namespace TestNetMQ.Server
 {
-    class Program
+    class Server
     {
         static void Main(string[] args)
         {
@@ -19,7 +22,11 @@ namespace TestNetMQ.Server
         {
             Console.WriteLine("Starting ZMQ Server");
 
-            using var server = new ResponseSocket(@"@tcp://localhost:5556");
+            var server = new ResponseSocket();
+            var serverCert = CertificatesManager.GetServerCertificate();
+            server.Options.CurveServer = true;
+            server.Options.CurveCertificate = serverCert;
+            server.Bind(@"tcp://localhost:5556");
 
             (byte[], bool) socketMsgRequest;
 

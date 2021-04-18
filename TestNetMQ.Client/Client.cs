@@ -3,11 +3,12 @@ using System.Threading.Tasks;
 using NetMQ;
 using NetMQ.Sockets;
 using Google.Protobuf;
+using Shared;
 using Shared.Message;
 
 namespace TestNetMQ.Client
 {
-    class Program
+    class Client
     {
         static void Main(string[] args)
         {
@@ -34,7 +35,12 @@ namespace TestNetMQ.Client
                 Id = 1
             };
 
-            using var client = new RequestSocket(@">tcp://localhost:5556");
+            var clientCertificatePair = new NetMQCertificate();
+            var client = new RequestSocket();
+            //client.Options.CurveServerCertificate = CertificatesManager.GetServerCertificate();
+            client.Options.CurveServerKey = CertificatesManager.GetServerCertificate().PublicKey;
+            client.Options.CurveCertificate = clientCertificatePair;
+            client.Connect(@"tcp://localhost:5556");
 
             var bufferedMsg = msg.ToByteArray();
 
